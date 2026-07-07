@@ -1,0 +1,13 @@
+{
+  "name": "powerclaw",
+  "owner": { "name": "SamsShow", "url": "https://github.com/SamsShow" },
+  "metadata": { "description": "Marketplace for the powerclaw skill: frontier discipline plus loop suggestions.", "version": "1.0.0" },
+  "plugins": [
+    {
+      "name": "powerclaw",
+      "source": "./",
+      "description": "Frontier operating discipline on any model: re-derive claims, label guesses, attack conclusions, and get loop suggestions when work repeats.",
+      "skills": ["./"]
+    }
+  ]
+}

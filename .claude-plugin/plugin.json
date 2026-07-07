@@ -1,0 +1,10 @@
+{
+  "name": "powerclaw",
+  "version": "1.0.0",
+  "description": "Frontier operating discipline for Claude on any model: verification procedures, a pre-send self-test, and proactive loop and automation suggestions.",
+  "author": { "name": "SamsShow", "url": "https://github.com/SamsShow" },
+  "homepage": "https://github.com/SamsShow/powerclaw",
+  "repository": "https://github.com/SamsShow/powerclaw",
+  "license": "MIT",
+  "keywords": ["claude", "reasoning", "verification", "loops", "automation", "agent-skills"]
+}
