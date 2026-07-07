@@ -36,6 +36,24 @@ Or with the skills CLI:
 npx skills add SamsShow/powerclaw
 ```
 
+### Always-on mode (Claude Code)
+
+By default a skill fires when its description matches the task. Always-on mode injects the pre-send gate and loop radar into every session via a SessionStart hook, so the discipline applies even when the skill is never explicitly triggered.
+
+Plugin installs get this automatically (`hooks/hooks.json` ships with the plugin). For a clone or symlink install, add this to `~/.claude/settings.json`:
+
+```json
+{
+  "hooks": {
+    "SessionStart": [
+      { "hooks": [ { "type": "command", "command": "bash ~/.claude/skills/powerclaw/scripts/radar-context.sh" } ] }
+    ]
+  }
+}
+```
+
+The injected block is about 20 lines, a deliberate summary; Claude loads the full skill when the work calls for it.
+
 ### claude.ai (paid plans)
 
 1. Download `powerclaw.zip` from the [latest release](https://github.com/SamsShow/powerclaw/releases/latest) (or run `scripts/package-zip.sh`).
@@ -53,6 +71,8 @@ references/operating-manual.md    Eight procedures: each with the move, an examp
 references/loop-playbook.md       Four loop types, exact commands, suggestion etiquette, token discipline
 scripts/validate.py               CI check: strict frontmatter, cross-references
 scripts/package-zip.sh            Builds the claude.ai upload zip
+scripts/radar-context.sh          SessionStart hook payload for always-on mode
+hooks/hooks.json                  Auto-registers the hook for plugin installs
 ```
 
 ## Companions

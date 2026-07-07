@@ -1,7 +1,7 @@
 {
   "name": "powerclaw",
   "owner": { "name": "SamsShow", "url": "https://github.com/SamsShow" },
-  "metadata": { "description": "Marketplace for the powerclaw skill: frontier discipline plus loop suggestions.", "version": "1.0.0" },
+  "metadata": { "description": "Marketplace for the powerclaw skill: frontier discipline plus loop suggestions.", "version": "1.1.0" },
   "plugins": [
     {
       "name": "powerclaw",

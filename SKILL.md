@@ -3,7 +3,7 @@ name: powerclaw
 description: "Frontier operating discipline for Claude on any model, plus proactive loop and automation suggestions. Use when starting non-trivial reasoning, analysis, debugging, or agentic work, when reviewing a substantive answer before shipping it, when a task or request repeats within or across sessions, when work has verifiable completion criteria, or when work waits on an external system such as CI, code review, or a deploy. Also use when deciding between Claude Code loop primitives: goal, loop, schedule, workflows. Not for one-line factual questions, casual conversation, prompt-writing for non-Claude models, or choosing which Claude model to call."
 license: MIT
 metadata:
-  version: "1.0.0"
+  version: "1.1.0"
   source-written: "2026-07-07"
 ---
 
