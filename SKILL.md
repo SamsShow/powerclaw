@@ -3,7 +3,7 @@ name: powerclaw
 description: "Frontier operating discipline for Claude on any model, plus proactive loop and automation suggestions. Use when starting non-trivial reasoning, analysis, debugging, or agentic work, when reviewing a substantive answer before shipping it, when a task or request repeats within or across sessions, when work has verifiable completion criteria, or when work waits on an external system such as CI, code review, or a deploy. Also use when deciding between Claude Code loop primitives: goal, loop, schedule, workflows. Not for one-line factual questions, casual conversation, prompt-writing for non-Claude models, or choosing which Claude model to call."
 license: MIT
 metadata:
-  version: "1.1.0"
+  version: "2.0.0"
   source-written: "2026-07-07"
 ---
 
@@ -47,6 +47,16 @@ Suggestion rules: one suggestion per task shape per session; include the stop co
 |---|---|
 | The eight procedures, worked examples, failure modes, the self-test | `references/operating-manual.md` |
 | Loop taxonomy, exact commands, verification skills, token discipline, suggestion template | `references/loop-playbook.md` |
+
+## Enforcement layer (Claude Code)
+
+Instructions are suggestions; hooks are enforcement. Three optional hooks mechanize this skill so the discipline holds even when context is long or attention drifts:
+
+- **Radar hook** (`scripts/hooks/radar.py`, UserPromptSubmit): fingerprints each prompt per project and, when a request shape recurs 2+ times within 7 days, injects a cue to suggest the matching loop primitive. One cue per shape per day.
+- **Risk gate** (`scripts/hooks/risk-gate.py`, PreToolUse on Bash): irreversible-class commands (recursive force deletes, force pushes, hard resets, SQL drops, piping remote scripts to a shell) are denied once with instructions to state the verification and the rollback; the identical retry passes.
+- **Stop gate** (`scripts/hooks/stop-gate.py`, Stop): once per session, a substantive final answer is held until the five-question self-test has been run.
+
+Plugin installs register all of them automatically via `hooks/hooks.json`. Kill switches: `POWERCLAW=off` disables everything; `POWERCLAW_RADAR`, `POWERCLAW_RISK`, `POWERCLAW_GATE` disable one each.
 
 ## Non-negotiables
 

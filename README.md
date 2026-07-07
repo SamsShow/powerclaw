@@ -1,6 +1,6 @@
 # powerclaw
 
-**Frontier discipline on any model. Loop suggestions when work repeats.**
+**Frontier discipline on any model. Loop suggestions when work repeats. Enforced by hooks, not vibes.**
 
 An open-source [Agent Skill](https://docs.claude.com/en/docs/agents-and-tools/agent-skills) for Claude. Models get deprecated and repriced; procedures do not. The quality gap between a frontier model and the tier below it is mostly a set of habits, and habits can be written down and run anywhere. powerclaw does two things:
 
@@ -54,6 +54,34 @@ Plugin installs get this automatically (`hooks/hooks.json` ships with the plugin
 
 The injected block is about 20 lines, a deliberate summary; Claude loads the full skill when the work calls for it.
 
+### Enforcement layer (Claude Code)
+
+Context blocks advise; hooks enforce. Version 2.0.0 adds three hooks that make the discipline mechanical. Plugin installs get all of them automatically. For a clone or symlink install, register them the same way as the SessionStart hook above:
+
+```json
+{
+  "hooks": {
+    "UserPromptSubmit": [
+      { "hooks": [ { "type": "command", "command": "python3 ~/.claude/skills/powerclaw/scripts/hooks/radar.py" } ] }
+    ],
+    "PreToolUse": [
+      { "matcher": "Bash", "hooks": [ { "type": "command", "command": "python3 ~/.claude/skills/powerclaw/scripts/hooks/risk-gate.py" } ] }
+    ],
+    "Stop": [
+      { "hooks": [ { "type": "command", "command": "python3 ~/.claude/skills/powerclaw/scripts/hooks/stop-gate.py" } ] }
+    ]
+  }
+}
+```
+
+What each one does:
+
+- **Radar** fingerprints every prompt (token signature, per project) and compares it against the last 7 days. When a request shape recurs 2+ times, it injects a cue to suggest the matching loop primitive after the task finishes. The detection is mechanical, so it works even when the repeats are days apart and the model would never connect them. One cue per shape per day.
+- **Risk gate** intercepts irreversible-class Bash commands: recursive force deletes, force pushes, hard resets, SQL drops and truncates, disk-level writes, piping remote scripts to a shell. The first attempt is denied with instructions to state how the target was verified and what the rollback is; the identical retry within the hour passes. Temp-directory and scratchpad deletes are exempt. This is procedure 3 (effort follows risk) and procedure 4 (verify by re-deriving) as a mechanism instead of a request.
+- **Stop gate** holds a substantive final answer once per session until the five-question self-test has been run. It respects the stop-hook-active flag, so it can never loop.
+
+Kill switches, as environment variables: `POWERCLAW=off` disables everything; `POWERCLAW_RADAR=off`, `POWERCLAW_RISK=off`, `POWERCLAW_GATE=off` disable one each. State lives in `~/.powerclaw/` and prunes itself. All hooks are dependency-free Python 3 (stdlib only) and fail open: a parse error or missing file exits silently rather than blocking work.
+
 ### claude.ai (paid plans)
 
 1. Download `powerclaw.zip` from the [latest release](https://github.com/SamsShow/powerclaw/releases/latest) (or run `scripts/package-zip.sh`).
@@ -72,7 +100,10 @@ references/loop-playbook.md       Four loop types, exact commands, suggestion et
 scripts/validate.py               CI check: strict frontmatter, cross-references
 scripts/package-zip.sh            Builds the claude.ai upload zip
 scripts/radar-context.sh          SessionStart hook payload for always-on mode
-hooks/hooks.json                  Auto-registers the hook for plugin installs
+hooks/hooks.json                  Auto-registers all hooks for plugin installs
+scripts/hooks/radar.py            Repeated-request detection, injects loop-suggestion cues
+scripts/hooks/risk-gate.py        Irreversible commands must state verification and rollback
+scripts/hooks/stop-gate.py        Holds substantive answers for the self-test, once per session
 ```
 
 ## Companions
